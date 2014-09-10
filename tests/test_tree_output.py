@@ -20,10 +20,10 @@ EXPECTED_ANSI = os.path.join(os.path.dirname(__file__),
 
 class TestHierarchicalOutput(unittest.TestCase):
 
-    def test_json(self):
-        # Emit output
-        tree_output = HierarchicalOutput.factory('json')
+    def bake_tree_mock(self, tree_output):
         tree_output.emit('foo')
+        tree_output.add_level()
+        tree_output.emit('foO')
         tree_output.add_level()
         tree_output.emit('bar')
 
@@ -34,13 +34,17 @@ class TestHierarchicalOutput(unittest.TestCase):
         tree_output.remove_level()
 
         tree_output.emit('baz', closed=True)
-
-        tree_output.remove_level()
         tree_output.emit('foo2')
 
+    def test_json(self):
+        # Emit output
+        tree_output = HierarchicalOutput.factory('json')
+        self.bake_tree_mock(tree_output)
         # Assertion:
-        expected = '["bar", [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10], "baz", "foo2"]'
-        assert expected == str(tree_output)
+        expected = '["foo", ["foO", ["bar", [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]], "baz"], "foo2"]'
+        obtained = str(tree_output)
+        #print(obtained)
+        assert expected == obtained
 
     def test_ascii(self):
         # Capture STDOUT.
@@ -50,41 +54,29 @@ class TestHierarchicalOutput(unittest.TestCase):
 
         # Do output
         tree_output = HierarchicalOutput.factory('ascii')
-        tree_output.emit('foo')
-        tree_output.add_level()
-        tree_output.emit('bar')
-
-        tree_output.add_level()
-        for num in range(10):
-            tree_output.emit(num)
-        tree_output.emit(10, closed=True)
-        tree_output.remove_level()
-
-        tree_output.emit('baz', closed=True)
-
-        tree_output.remove_level()
-        tree_output.emit('foo2')
+        self.bake_tree_mock(tree_output)
 
         # Assertion:
         expected = '''+-- foo
-|   +-- bar
-|   |   +-- 0
-|   |   +-- 1
-|   |   +-- 2
-|   |   +-- 3
-|   |   +-- 4
-|   |   +-- 5
-|   |   +-- 6
-|   |   +-- 7
-|   |   +-- 8
-|   |   +-- 9
-|   |   `-- 10
+|   +-- foO
+|   |   +-- bar
+|   |   |   +-- 0
+|   |   |   +-- 1
+|   |   |   +-- 2
+|   |   |   +-- 3
+|   |   |   +-- 4
+|   |   |   +-- 5
+|   |   |   +-- 6
+|   |   |   +-- 7
+|   |   |   +-- 8
+|   |   |   +-- 9
+|   |   |   `-- 10
 |   `-- baz
 +-- foo2
 '''
         sys.stdout = sys_output
         obtained = output.getvalue()
-        # print(obtained)
+        #print(obtained)
         assert expected == obtained
 
     def test_ansi(self):
@@ -92,29 +84,15 @@ class TestHierarchicalOutput(unittest.TestCase):
         tree_output = HierarchicalOutput.factory('ansi')
         import colorama
         # Comment this out in order to see output in colors.
-        colorama.deinit()
+        # colorama.deinit()
 
         # Capture STDOUT.
         output = StringIO()
         sys_output = sys.stdout
         sys.stdout = output
 
-        # Do output
-        tree_output.emit({'name': 'bazar', 'value': 'foo'})
-        tree_output.add_level()
-        tree_output.emit('bar')
-
-        tree_output.add_level()
-        for num in range(10):
-            tree_output.emit(num)
-        tree_output.emit(10, closed=True)
-        tree_output.remove_level()
-
-        tree_output.emit('baz', closed=True)
-
-        tree_output.remove_level()
-        tree_output.emit('foo2')
-        tree_output.emit('end', closed=True)
+        # Output
+        self.bake_tree_mock(tree_output)
 
         # Assertion:
         expected = codecs.open(EXPECTED_ANSI, 'r', 'utf-8').read()

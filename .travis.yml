@@ -1,0 +1,12 @@
+language: python
+
+python:
+  - "2.7"
+
+before_install:    
+    - pip install colorama
+
+install: 
+    - python setup.py build -f
+
+script:  "python setup.py nosetests -s"

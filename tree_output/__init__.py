@@ -16,7 +16,7 @@ import colorama
 from colorama import Fore, Back, Style
 
 
-__version__ = '0.1.1'
+__version__ = '0.1.2'
 
 
 FOREMAP = {
@@ -73,12 +73,15 @@ class HierarchicalOutput(object):
         Implement in format-specific adapter the aggregation of the output
         record.
         '''
+        if closed:
+            self.remove_level()
 
     def add_level(self):
         self.level += 1
 
     def remove_level(self):
-        self.level -= 1
+        if self.level > 0:
+            self.level -= 1
 
 
 class NullOutput(HierarchicalOutput):
@@ -91,6 +94,7 @@ class NullOutput(HierarchicalOutput):
 
     def emit(self, record, closed=False):
         '''Do nothing'''
+        HierarchicalOutput.emit(self, record, closed)
 
 
 class JsonOutput(HierarchicalOutput):
@@ -111,11 +115,12 @@ class JsonOutput(HierarchicalOutput):
 
     def remove_level(self):
         super(JsonOutput, self).remove_level()
-        assert len(self.parents) > 0
-        self.data = self.parents.pop()
+        if len(self.parents) > 0:
+            self.data = self.parents.pop()
 
     def emit(self, record, closed=False):
         self.data.append(record)
+        HierarchicalOutput.emit(self, record, closed)
 
     def __str__(self):
         '''Represent as JSON'''
@@ -166,6 +171,7 @@ class AsciiOutput(HierarchicalOutput):
                 self.output(value, branch=self.hanging_branch, colors=colors)
             else:
                 self.output(value, branch=branch, colors=colors)
+        HierarchicalOutput.emit(self, record, closed)
 
     def output_indent(self):
         prefix = ''

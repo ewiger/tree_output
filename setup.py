@@ -37,6 +37,9 @@ setup(
     ],
     #package_dir={'', 'tree_output'},
     download_url='https://github.com/ewiger/tree_output/tarball/master',
+    install_requires=[
+        'colorama>=0.2.7',
+    ],
     classifiers=[
         'Environment :: Console',
         'Intended Audience :: Developers',
@@ -44,4 +47,6 @@ setup(
         'Topic :: Software Development :: Libraries :: Python Modules',
         'Development Status :: 5 - Production/Stable',
     ],
+    tests_require=['nose>=1.0'],
+    test_suite='nose.collector',
 )

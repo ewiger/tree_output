@@ -28,15 +28,15 @@ class TestHierarchicalLogHandler(unittest.TestCase):
         logger.info('foo2')
         logger.info('bar', extra={'add_hlevel': True})
         logger.info('foo2')
-        # houtput.add_level()
-        # for num in range(10):
-        #     houtput.emit(num)
-        # houtput.emit(10, closed=True)
-        # houtput.remove_level()
+        logger.info('Numbers', extra={'add_hlevel': True})
+        for num in range(10):
+            logger.warn(num)
+        logger.warn('end of numbers', extra={'hclosed': True})
+        logger.debug('level up', extra={'remove_hclosed': True})
 
-        # houtput.emit('baz', closed=True)
+        expected = '["foo", ["bar", "foo2", ["bar", "foo2", ["Numbers", "0", '\
+            '"1", "2", "3", "4", "5", "6", "7", "8", "9", "end of numbers"], '\
+            '"level up"]]]'
+        obtained = str(houtput)
+        assert expected == obtained
 
-        # houtput.remove_level()
-        # houtput.emit('foo2')
-
-        print(str(houtput))
