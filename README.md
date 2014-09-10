@@ -105,7 +105,7 @@ produces
             "9", 
             "end of numbers"
         ], 
-    '"level up"]
+    "level up"]
     ]
 ]
 ```
