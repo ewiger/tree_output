@@ -11,7 +11,7 @@ extend_path = lambda root_path, folder: sys.path.insert(
 ROOT = os.path.dirname(os.path.dirname(__file__))
 extend_path(ROOT, '')
 # import tree_output
-from tree_output import HierarchicalOutput
+from tree_output.houtput import HierarchicalOutput
 
 
 EXPECTED_ANSI = os.path.join(os.path.dirname(__file__),
