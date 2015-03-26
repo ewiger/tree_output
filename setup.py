@@ -18,8 +18,8 @@ def readme():
 def get_version():
     src_path = os.path.join(os.path.dirname(__file__), 'src')
     sys.path.append(src_path)
-    import tree_output
-    return tree_output.__version__
+    from tree_output.version import version as tree_output_version
+    return tree_output_version
 
 
 setup(

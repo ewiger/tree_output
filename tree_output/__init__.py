@@ -14,9 +14,9 @@ import sys
 import json
 import colorama
 from colorama import Fore, Back, Style
+from tree_output.version import version as tree_output_version
 
-
-__version__ = '0.1.2'
+__version__ = tree_output_version
 
 
 FOREMAP = {
